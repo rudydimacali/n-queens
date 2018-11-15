@@ -56,82 +56,56 @@ window.countNRooksSolutions = function(n) {
   // Create a counter to hold remaining pieces
   var solutionCount = 0;
   var board = new Board({n: n});
-  var testChildBoards = function(row, col) {
-    if (row > board.rows().length - 1) {
-      return;
-    }
-    // toggle the next value
-    board.togglePiece(row, col);
-    // If a solution is found, add to solutionCount
-    if (!board.hasAnyRooksConflicts() && row + 1 === board.rows().length) {
-      solutionCount++;
-      board.togglePiece(row, col);
-      return;
-    }
-
-    // If there is a rook conflict, remove that rook and return
-    if (board.hasAnyRooksConflicts()) {
-      board.togglePiece(row, col);
-      return;
-    }
-
-    // If new board with added piece has no conflicts
-    if (!board.hasAnyRooksConflicts() && row < board.rows().length) {
-      // Iterate through positions in row below
-      var currentPlace = [row, col];
-      for (var j = 0; j < board.rows().length; j++) {
-        testChildBoards(row + 1, j);
+  var testChildBoards = function(row) {
+    // toggle the passed value value
+    if (!board.hasAnyRooksConflicts()) {
+      if (row < n) {
+        for (var j = 0; j < n; j++) {
+          board.togglePiece(row, j);
+          testChildBoards(row + 1);
+          board.togglePiece(row, j);
+        }        
+      } else if (board.rows().length === n) {
+        solutionCount++;
+        return;        
       }
-      board.togglePiece(currentPlace[0], currentPlace[1]);
     }
   };
-  for (var i = 0; i < board.rows().length; i++) {
-    testChildBoards(0, i);
-  } 
+  testChildBoards(0);
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
 };
 
 // return a matrix (an array of arrays) representing a single nxn chessboard, with n queens placed such that none of them can attack each other
 window.findNQueensSolution = function(n) {
+  debugger;
   var solution = undefined;
   if (n === 0) {
     return [];
   }
   var board = new Board({n: n});
-  var testChildBoards = function(row, col) {
-    if (row > board.rows().length - 1 || solution !== undefined) {
+  var testChildBoards = function(row) {
+    // toggle the passed value value
+    if (solution !== undefined) {
       return;
-    }
-    // toggle the next value
-    board.togglePiece(row, col);
-    // If a solution is found, add to solutionCount
-    if (!board.hasAnyQueensConflicts() && (row + 1 === board.rows().length)) {
-      solution = board.rows();
-      console.log('solution test', solution);
-      return;
-    }
-
-    // If there is a queen conflict, remove that queen and return
-    if (board.hasAnyQueensConflicts()) {
-      board.togglePiece(row, col);
-      return;
-    }
-
-    // If new board with added piece has no conflicts
-    if (!board.hasAnyQueensConflicts() && row < board.rows().length) {
-      // Iterate through positions in row below
-      var currentPlace = [row, col];
-      for (var j = 0; j < board.rows().length; j++) {
-        testChildBoards(row + 1, j);
-      }
-      board.togglePiece(currentPlace[0], currentPlace[1]);
-      return;
+    } else {
+      if (!board.hasAnyQueensConflicts()) {
+        if (row < n) {
+          for (var j = 0; j < n; j++) {
+            board.togglePiece(row, j);
+            testChildBoards(row + 1);
+            if (solution === undefined) {
+              board.togglePiece(row, j);
+            }
+          }        
+        } else if (board.rows().length === n) {
+          solution = board.rows();
+          return;        
+        }
+      }      
     }
   };
-  for (var i = 0; i < board.rows().length; i++) {
-    testChildBoards(0, i);
-  }
+  testChildBoards(0);
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
   return solution;
 };
@@ -140,37 +114,24 @@ window.findNQueensSolution = function(n) {
 window.countNQueensSolutions = function(n) {
   var solutionCount = 0;
   var board = new Board({n: n});
-  var testChildBoards = function(row, col) {
-    if (row > board.rows().length - 1) {
-      return;
-    }
-    // toggle the next value
-    board.togglePiece(row, col);
-    // If a solution is found, add to solutionCount
-    if (!board.hasAnyQueensConflicts() && row + 1 === board.rows().length) {
+  if (n === 0) {
+    return 1;
+  }
+  var testChildBoards = function(row) {
+    // toggle the passed value value
+    if (row === n) {
       solutionCount++;
       return;
     }
-
-    // If there is a rook conflict, remove that rook and return
-    if (board.hasAnyQueensConflicts()) {
-      board.togglePiece(row, col);
-      return;
-    }
-
-    // If new board with added piece has no conflicts
-    if (!board.hasAnyQueensConflicts() && row < board.rows().length) {
-      // Iterate through positions in row below
-      var currentPlace = [row, col];
-      for (var j = 0; j < board.rows().length; j++) {
-        testChildBoards(row + 1, j);
+    for (var j = 0; j < n; j++) {
+      board.togglePiece(row, j);
+      if (!board.hasAnyQueensConflicts()) {
+        testChildBoards(row + 1);
       }
-      board.togglePiece(currentPlace[0], currentPlace[1]);
+      board.togglePiece(row, j);
     }
   };
-  for (var i = 0; i < board.rows().length; i++) {
-    testChildBoards(0, i);
-  }
+  testChildBoards(0);
   console.log('Number of solutions for ' + n + ' queens:', solutionCount);
   return solutionCount;
 };

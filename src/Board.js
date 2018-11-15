@@ -40,6 +40,10 @@
     hasAnyRooksConflicts: function() {
       return this.hasAnyRowConflicts() || this.hasAnyColConflicts();
     },
+    
+    hasRookConflictAt: function(row, col) {
+      return this.hasRowConflictAt(row) && this.hasColConflictAt(col);
+    },
 
     hasAnyQueenConflictsOn: function(rowIndex, colIndex) {
       return (
@@ -81,7 +85,7 @@
     hasRowConflictAt: function(rowIndex) {
       var numQueens = 0;
       var row = this.rows()[rowIndex];
-      var rowTotal = _.reduce(row, function(value, accum) {return accum += value;});
+      var rowTotal = _.reduce(row, function(value, accum) { return accum += value; });
       if (rowTotal > 1) {
         return true;
       }
