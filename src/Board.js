@@ -112,7 +112,7 @@
       for (var i = 0; i < this.rows().length; i++) {
         column.push(this.rows()[i][colIndex]);
       }
-      var colTotal = _.reduce(column, function(value, accum) {return accum += value;});
+      var colTotal = _.reduce(column, function(value, accum) { return accum += value; });
       if (colTotal > 1) {
         return true;
       }
@@ -198,7 +198,6 @@
       var startAt = (this.rows().length * 2) - 1;
       console.log(startAt);
       for (var i = startAt; i > 0; i--) {
-        debugger;
         if (hasConflict === true) {
           hasConflict = true;
         } else {
