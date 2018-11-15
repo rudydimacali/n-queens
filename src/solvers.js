@@ -26,7 +26,6 @@ window.findNRooksSolution = function(n) {
     }
     var childBoard = new Board(board);
     childBoard.togglePiece(row, col);
-    console.log(childBoard.rows());
     var rowCounter = row;
     var colCounter = col + 1;
     if (colCounter >= childBoard.rows().length) {
@@ -63,43 +62,42 @@ window.findNRooksSolution = function(n) {
 
 // return the number of nxn chessboards that exist, with n rooks placed such that none of them can attack each other
 window.countNRooksSolutions = function(n) {
-  var solutionCount = 0; //fixme
-  var board = new Board({n: n});
   // Create a counter to hold remaining pieces
+  var solutionCount = 0;
+  var board = new Board({n: n});
   var testChildBoards = function(board, row, col) {
+    // Create a new board based on the old board
     var childBoard = new Board(board);
-    childBoard.togglePiece(row, col);
     console.log(childBoard.rows());
-    var rowCounter = row;
-    var colCounter = col + 1;
-    if (colCounter >= childBoard.rows().length) {
-      rowCounter = row + 1;
-      colCounter = 0;
-    }
+    // toggle the next value
+    childBoard.togglePiece(row, col);
+    // Move forward the position to call for next test
+    var rowCounter = row + 1;
+    // Find how many pieces are on the board
     var numPieces = _.reduce(childBoard.rows(), function(memo, row) {
       return memo + _.reduce(row, function(memo, col) {
         return memo + col;
       }, 0);
     }, 0);
+    // If there is a rook conflict, remove that rook and return
     if (childBoard.hasAnyRooksConflicts()) {
       childBoard.togglePiece(row, col);
       return;
     }
     // If new board with added piece has no conflicts
     if (!childBoard.hasAnyRooksConflicts() && numPieces < childBoard.rows().length) {
-      // Loop through remainder of row and add and test
-      for (rowCounter; rowCounter < childBoard.rows().length; rowCounter++) {
-        for (colCounter; colCounter < childBoard.rows().length; colCounter++) {
-          testChildBoards(childBoard.rows(), rowCounter, colCounter);
-        }
-        colCounter = 0;
-      }
+      for (var j = 0; j < childBoard.rows().length; j++) {
+        testChildBoards(childBoard.rows(), rowCounter, j);
+      }      
     }
+    // If a solution is found, add to solutionCount
     if (!childBoard.hasAnyRooksConflicts() && numPieces === childBoard.rows().length) {
       solutionCount++;
     }
   };
-  testChildBoards(board.rows(), 0, 0);
+  for (var i = 0; i < board.rows().length; i++) {
+    testChildBoards(board.rows(), 0, i); 
+  } 
   console.log('Number of solutions for ' + n + ' rooks:', solutionCount);
   return solutionCount;
 };

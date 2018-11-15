@@ -196,7 +196,6 @@
     hasAnyMinorDiagonalConflicts: function() {
       var hasConflict = false;
       var startAt = (this.rows().length * 2) - 1;
-      console.log(startAt);
       for (var i = startAt; i > 0; i--) {
         if (hasConflict === true) {
           hasConflict = true;
