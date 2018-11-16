@@ -80,33 +80,32 @@ window.countNRooksSolutions = function(n) {
 window.findNQueensSolution = function(n) {
   debugger;
   var solution = undefined;
-  if (n === 0) {
-    return [];
-  }
   var board = new Board({n: n});
   var testChildBoards = function(row) {
     // toggle the passed value value
-    if (solution !== undefined) {
+    if (row === n) {
+      solution = board.rows();
       return;
-    } else {
-      if (!board.hasAnyQueensConflicts()) {
-        if (row < n) {
-          for (var j = 0; j < n; j++) {
-            board.togglePiece(row, j);
-            testChildBoards(row + 1);
-            if (solution === undefined) {
-              board.togglePiece(row, j);
-            }
-          }        
-        } else if (board.rows().length === n) {
-          solution = board.rows();
-          return;        
+    }
+    for (var j = 0; j < n; j++) {
+      if (solution === undefined) {
+        board.togglePiece(row, j);
+        if (!board.hasAnyQueensConflicts()) {
+          testChildBoards(row + 1);
         }
-      }      
+        if (solution === undefined && board.rows()[row][j] === 1) {
+          board.togglePiece(row, j);
+        }
+      } else {
+        return;
+      }
     }
   };
   testChildBoards(0);
   console.log('Single solution for ' + n + ' queens:', JSON.stringify(solution));
+  if (solution === undefined) {
+    return board.rows();
+  }
   return solution;
 };
 
